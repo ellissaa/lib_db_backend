@@ -1,7 +1,7 @@
 package org.example.database_lib.repository;
 
-import org.example.database_lib.model.Loan;
+import org.example.database_lib.model.Copy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LoanRepository extends JpaRepository<Loan, Long> {
+public interface CopyRepository extends JpaRepository<Copy, Long> {
 }

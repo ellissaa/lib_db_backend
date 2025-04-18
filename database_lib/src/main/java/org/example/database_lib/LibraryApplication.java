@@ -4,9 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DatabaseLibApplication {
-
+public class LibraryApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(DatabaseLibApplication.class, args);
+		SpringApplication.run(LibraryApplication.class, args);
 	}
 }
