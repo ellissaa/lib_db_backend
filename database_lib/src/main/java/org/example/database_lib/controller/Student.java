@@ -1,6 +1,9 @@
-package org.example.database_lib.model;
+package org.example.database_lib.controller;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Student")
@@ -29,7 +32,7 @@ public class Student extends Reader {
         return faculty;
     }
 
-    public String getStudentGroup() {
+    public String getStudent_group() {
         return student_group;
     }
 
@@ -37,7 +40,7 @@ public class Student extends Reader {
         this.faculty = faculty;
     }
 
-    public void setStudentGroup(String student_group) {
+    public void setStudent_group(String student_group) {
         this.student_group = student_group;
     }
 }

@@ -1,6 +1,7 @@
-package org.example.database_lib.model;
+package org.example.database_lib.controller;
 
 import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 
 @Embeddable
@@ -9,11 +10,6 @@ public class PublicationWorkId implements Serializable {
     private Long workId;
 
     public PublicationWorkId() {}
-
-    public PublicationWorkId(Long publicationId, long workId) {
-        this.publicationId = publicationId;
-        this.workId = workId;
-    }
 
     public Long getPublicationId() {
         return publicationId;
