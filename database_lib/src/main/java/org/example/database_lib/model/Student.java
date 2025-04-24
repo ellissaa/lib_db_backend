@@ -1,43 +1,27 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Student")
-@PrimaryKeyJoinColumn(name = "reader_id")
-public class Student extends Reader {
-    @Column(name = "university", nullable = false, length = 100)
-    private String university;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Student {
+    private Long readerId;            // Corresponds to INTEGER PRIMARY KEY REFERENCES Reader(id)
+    private String university;         // Corresponds to VARCHAR(100) NOT NULL
+    private String faculty;            // Corresponds to VARCHAR(100) NOT NULL
+    private String studentGroup;       // Corresponds to VARCHAR(20)
 
-    @Column(name = "faculty", nullable = false, length = 100)
-    private String faculty;
-
-    @Column(name = "student_group", nullable = false, length = 100)
-    private String student_group;
-
-    public Student() {}
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public String getFaculty() {
-        return faculty;
-    }
-
-    public String getStudentGroup() {
-        return student_group;
-    }
-
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-    }
-
-    public void setStudentGroup(String student_group) {
-        this.student_group = student_group;
+    @Override
+    public String toString() {
+        return "Student{" +
+                "readerId=" + readerId +
+                ", university='" + university + '\'' +
+                ", faculty='" + faculty + '\'' +
+                ", studentGroup='" + studentGroup + '\'' +
+                '}';
     }
 }

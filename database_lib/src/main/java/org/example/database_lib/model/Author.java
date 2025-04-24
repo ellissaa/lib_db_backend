@@ -1,89 +1,31 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Author")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Author {
+    private Long id;                // Corresponds to the SERIAL PRIMARY KEY
+    private String name;            // Corresponds to VARCHAR(50)
+    private String surname;         // Corresponds to VARCHAR(50)
+    private String patronymic;      // Corresponds to VARCHAR(50)
+    private String country;         // Corresponds to VARCHAR(100)
+    private Integer birthYear;      // Corresponds to INTEGER
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
-
-    @Column(name = "surname", nullable = false, length = 50)
-    private String surname;
-
-    @Column(name = "patronymic", length = 50)
-    private String patronymic;
-
-    @Column(name = "country", length = 100)
-    private String country;
-
-    @Column(name = "birth_year")
-    private Integer birthYear;
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkAuthor> workAuthors;
-
-    public Author() {}
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setWorkAuthors(List<WorkAuthor> workAuthors) {
-        this.workAuthors = workAuthors;
-    }
-
-    public List<WorkAuthor> getWorkAuthors() {
-        return workAuthors;
-    }
-
-    public Integer getBirthYear() {
-        return birthYear;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setBirthYear(Integer birthYear) {
-        this.birthYear = birthYear;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", country='" + country + '\'' +
+                ", birthYear=" + birthYear +
+                '}';
     }
 }

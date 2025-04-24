@@ -1,45 +1,24 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Copy")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Copy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;                // Corresponds to the SERIAL PRIMARY KEY
+    private Long publicationId;     // Corresponds to INTEGER NOT NULL REFERENCES Publication(id)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publication_id", nullable = false)
-    private Publication publication;
-
-    @OneToMany(mappedBy = "copy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LoanJournal> loanJournals;
-
-    public Copy() {}
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setLoanJournals(List<LoanJournal> loanJournals) {
-        this.loanJournals = loanJournals;
-    }
-
-    public List<LoanJournal> getLoanJournals() {
-        return loanJournals;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
+    @Override
+    public String toString() {
+        return "Copy{" +
+                "id=" + id +
+                ", publicationId=" + publicationId +
+                '}';
     }
 }
+

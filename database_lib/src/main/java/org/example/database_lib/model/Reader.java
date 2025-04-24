@@ -1,113 +1,37 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
-import java.util.List;
 
-@Entity
-@Table(name = "Reader")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reader {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;                // Corresponds to the SERIAL PRIMARY KEY
+    private String name;            // Corresponds to VARCHAR(50)
+    private String surname;         // Corresponds to VARCHAR(50)
+    private String patronymic;      // Corresponds to VARCHAR(50)
+    private LocalDate birthDate;    // Corresponds to DATE
+    private String address;         // Corresponds to VARCHAR(200)
+    private String phone;           // Corresponds to VARCHAR(20)
+    private Long libraryId;         // Corresponds to INTEGER NOT NULL REFERENCES Library(id)
 
-    @Column(nullable = false, length = 50)
-    private String name;
-
-    @Column(nullable = false, length = 50)
-    private String surname;
-
-    @Column(length = 50)
-    private String patronymic;
-
-    private LocalDate birthDate;
-
-    @Column(length = 200)
-    private String address;
-
-    @Column(length = 20)
-    private String phone;
-
-    @ManyToOne
-    @JoinColumn(name = "library_id", nullable = false)
-    private Library library;
-
-    @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL)
-    private List<LoanJournal> loanJournals;
-
-    public Reader() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Library getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(Library library) {
-        this.library = library;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public List<LoanJournal> getLoanJournals() {
-        return loanJournals;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public void setLoanJournals(List<LoanJournal> loanJournals) {
-        this.loanJournals = loanJournals;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
+    @Override
+    public String toString() {
+        return "Reader{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", birthDate=" + birthDate +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", libraryId=" + libraryId +
+                '}';
     }
 }

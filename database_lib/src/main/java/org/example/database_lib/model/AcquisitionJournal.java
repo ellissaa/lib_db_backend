@@ -1,68 +1,31 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "AcquisitionJournal")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AcquisitionJournal {
+    private Long id;                    // Corresponds to the SERIAL PRIMARY KEY
+    private LocalDate acquisitionDate;  // Corresponds to DATE NOT NULL
+    private Integer quantity;            // Corresponds to INTEGER NOT NULL
+    private String operationType;       // Corresponds to VARCHAR(3)
+    private Long publicationId;          // Corresponds to INTEGER NOT NULL REFERENCES Publication(id)
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "acquisition_date", nullable = false)
-    private LocalDate acquisitionDate;
-
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @Column(name = "operation_type", length = 3)
-    private String operationType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publication_id", nullable = false)
-    private Publication publication;
-
-    public AcquisitionJournal() {}
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public LocalDate getAcquisitionDate() {
-        return acquisitionDate;
-    }
-
-    public String getOperationType() {
-        return operationType;
-    }
-
-    public void setAcquisitionDate(LocalDate acquisitionDate) {
-        this.acquisitionDate = acquisitionDate;
-    }
-
-    public void setOperationType(String operationType) {
-        this.operationType = operationType;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    @Override
+    public String toString() {
+        return "AcquisitionJournal{" +
+                "id=" + id +
+                ", acquisitionDate=" + acquisitionDate +
+                ", quantity=" + quantity +
+                ", operationType='" + operationType + '\'' +
+                ", publicationId=" + publicationId +
+                '}';
     }
 }

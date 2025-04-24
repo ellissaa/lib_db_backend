@@ -1,22 +1,23 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Resident")
-@PrimaryKeyJoinColumn(name = "reader_id")
-public class Resident extends Reader {
-    @Column(name = "occupation", length = 100)
-    private String occupation;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Resident {
+    private Long readerId;           // Corresponds to INTEGER PRIMARY KEY REFERENCES Reader(id)
+    private String occupation;        // Corresponds to VARCHAR(100)
 
-    public Resident() {
-    }
-
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
+    @Override
+    public String toString() {
+        return "Resident{" +
+                "readerId=" + readerId +
+                ", occupation='" + occupation + '\'' +
+                '}';
     }
 }

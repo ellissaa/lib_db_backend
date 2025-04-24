@@ -1,32 +1,25 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Schoolchild")
-@PrimaryKeyJoinColumn(name = "reader_id")
-public class Schoolchild extends Reader {
-    @Column(name = "school", nullable = false, length = 100)
-    private String school;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Schoolchild {
+    private Long readerId;            // Corresponds to INTEGER PRIMARY KEY REFERENCES Reader(id)
+    private String school;             // Corresponds to VARCHAR(100) NOT NULL
+    private String grade;              // Corresponds to VARCHAR(20) NOT NULL
 
-    @Column(name = "grade", nullable = false, length = 20)
-    private String grade;
-
-    public Schoolchild() {}
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public String getSchool() {
-        return school;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
+    @Override
+    public String toString() {
+        return "Schoolchild{" +
+                "readerId=" + readerId +
+                ", school='" + school + '\'' +
+                ", grade='" + grade + '\'' +
+                '}';
     }
 }

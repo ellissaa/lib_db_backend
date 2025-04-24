@@ -1,32 +1,25 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Scientist")
-@PrimaryKeyJoinColumn(name = "reader_id")
-public class Scientist extends Reader {
-    @Column(name = "academic_degree", nullable = false, length = 100)
-    private String academicDegree;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Scientist {
+    private Long readerId;            // Corresponds to INTEGER PRIMARY KEY REFERENCES Reader(id)
+    private String academicDegree;     // Corresponds to VARCHAR(100) NOT NULL
+    private String workplace;          // Corresponds to VARCHAR(100)
 
-    @Column(name = "workplace", length = 100)
-    private String workplace;
-
-    public Scientist() {}
-
-    public String getAcademicDegree() {
-        return academicDegree;
-    }
-
-    public String getWorkplace() {
-        return workplace;
-    }
-
-    public void setAcademicDegree(String academicDegree) {
-        this.academicDegree = academicDegree;
-    }
-
-    public void setWorkplace(String workplace) {
-        this.workplace = workplace;
+    @Override
+    public String toString() {
+        return "Scientist{" +
+                "readerId=" + readerId +
+                ", academicDegree='" + academicDegree + '\'' +
+                ", workplace='" + workplace + '\'' +
+                '}';
     }
 }

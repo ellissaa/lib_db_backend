@@ -1,9 +1,5 @@
 package org.example.database_lib.repository;
 
-import org.example.database_lib.model.Author;
-import org.example.database_lib.model.Work;
-import org.example.database_lib.model.WorkAuthor;
-import org.example.database_lib.model.WorkAuthorId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

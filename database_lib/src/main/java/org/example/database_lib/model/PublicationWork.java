@@ -1,46 +1,39 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Publication_Work")
+import java.util.Objects;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PublicationWork {
-    @EmbeddedId
-    private PublicationWorkId id;
+    private Long publicationId;       // Corresponds to INTEGER NOT NULL REFERENCES Publication(id)
+    private Long workId;              // Corresponds to INTEGER NOT NULL REFERENCES Work(id)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("publicationId")
-    @JoinColumn(name = "publication_id")
-    private Publication publication;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("workId")
-    @JoinColumn(name = "work_id")
-    private Work work;
-
-    public PublicationWork() {}
-
-    public void setWork(Work work) {
-        this.work = work;
+    @Override
+    public String toString() {
+        return "PublicationWork{" +
+                "publicationId=" + publicationId +
+                ", workId=" + workId +
+                '}';
     }
 
-    public Work getWork() {
-        return work;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PublicationWork)) return false;
+        PublicationWork that = (PublicationWork) o;
+        return Objects.equals(publicationId, that.publicationId) &&
+                Objects.equals(workId, that.workId);
     }
 
-    public void setId(PublicationWorkId id) {
-        this.id = id;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public PublicationWorkId getId() {
-        return id;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
+    @Override
+    public int hashCode() {
+        return Objects.hash(publicationId, workId);
     }
 }

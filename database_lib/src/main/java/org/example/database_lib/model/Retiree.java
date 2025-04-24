@@ -1,22 +1,23 @@
 package org.example.database_lib.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
-@Table(name = "Retiree")
-@PrimaryKeyJoinColumn(name = "reader_id")
-public class Retiree extends Reader {
-    @Column(name = "has_benefits", nullable = false)
-    private Boolean has_benefits;
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Retiree {
+    private Long readerId;            // Corresponds to INTEGER PRIMARY KEY REFERENCES Reader(id)
+    private Boolean hasBenefits;       // Corresponds to BOOLEAN NOT NULL
 
-    public Retiree() {
-    }
-
-    public Boolean getHasBenefits() {
-        return has_benefits;
-    }
-
-    public void setHasBenefits(Boolean has_benefits) {
-        this.has_benefits = has_benefits;
+    @Override
+    public String toString() {
+        return "Retiree{" +
+                "readerId=" + readerId +
+                ", hasBenefits=" + hasBenefits +
+                '}';
     }
 }
