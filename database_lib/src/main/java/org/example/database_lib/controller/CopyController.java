@@ -5,9 +5,10 @@ import org.example.database_lib.service.AbstractService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin()
 @RequestMapping("/api/copies")
-public class CopyController extends AbstractController<Copy> {
-    protected CopyController(AbstractService<Copy> service) {
+public class CopyController extends AbstractController<Copy, Long> {
+    protected CopyController(AbstractService<Copy, Long> service) {
         super(service);
     }
 }

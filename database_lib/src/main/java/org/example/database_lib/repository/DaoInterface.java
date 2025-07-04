@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DaoInterface<T> {
-    int create(T entity);
+public interface DaoInterface<T, ID> {
+    T create(T entity);
     List<T> findAll();
-    Optional<T> findById(Long id);
+    Optional<T> findById(ID id);
     int update(T entity);
-    int delete(Long id);
+    int delete(ID id);
 }

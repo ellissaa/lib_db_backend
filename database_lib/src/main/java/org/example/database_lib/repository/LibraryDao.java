@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class LibraryDao implements DaoInterface<Library> {
+public class LibraryDao implements DaoInterface<Library, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Library> rowMapper;
 
@@ -29,16 +29,16 @@ public class LibraryDao implements DaoInterface<Library> {
     }
 
     @Override
-    public int create(Library library) {
+    public Library create(Library library) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("INSERT INTO Library (name, address, phone, email) " +
                         "VALUES (:name, :address, :phone, :email)")
-                .param(library.getName())
-                .param(library.getAddress())
-                .param(library.getPhone())
-                .param( library.getEmail())
+                .param("name", library.getName())
+                .param("address", library.getAddress())
+                .param("phone", library.getPhone())
+                .param("email", library.getEmail())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return library;
     }
 
     @Override
@@ -48,8 +48,8 @@ public class LibraryDao implements DaoInterface<Library> {
 
     @Override
     public Optional<Library> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Library l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Library WHERE id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
     }
 
@@ -58,18 +58,18 @@ public class LibraryDao implements DaoInterface<Library> {
         return jdbcClient.sql("UPDATE Library " +
                         "SET name = :name, address = :address, phone = :phone, email = :email " +
                         "WHERE id = :id")
-                .param(library.getId())
-                .param( library.getName())
-                .param( library.getAddress())
-                .param( library.getPhone())
-                .param( library.getEmail())
+                .param("name", library.getName())
+                .param("address", library.getAddress())
+                .param("phone", library.getPhone())
+                .param("email", library.getEmail())
+                .param("id", library.getId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Library l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Library WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }

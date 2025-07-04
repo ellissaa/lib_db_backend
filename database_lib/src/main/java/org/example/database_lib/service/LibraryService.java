@@ -5,8 +5,8 @@ import org.example.database_lib.repository.DaoInterface;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LibraryService extends AbstractService<Library> {
-    public LibraryService(DaoInterface<Library> dao) {
+public class LibraryService extends AbstractService<Library, Long> {
+    public LibraryService(DaoInterface<Library, Long> dao) {
         super(dao);
     }
 }

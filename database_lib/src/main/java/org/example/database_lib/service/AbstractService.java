@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public abstract class AbstractService<T> {
-    private final DaoInterface<T> dao;
+public abstract class AbstractService<T, ID> {
+    private final DaoInterface<T, ID> dao;
 
     @Autowired
-    protected AbstractService(DaoInterface<T> dao) {
+    protected AbstractService(DaoInterface<T, ID> dao) {
         this.dao = dao;
     }
 
-    public int create(T entity) {
+    public T create(T entity) {
         return dao.create(entity);
     }
 
@@ -24,10 +24,10 @@ public abstract class AbstractService<T> {
         return dao.findAll();
     }
 
-    public T findById(Long id) {
+    public T findById(ID id) {
         return dao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(
-                        "Content with id %d not found", id
+                        "Content with id %s not found", id
                 )));
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractService<T> {
         return dao.update(entity);
     }
 
-    public int delete(Long id) {
+    public int delete(ID id) {
         return dao.delete(id);
     }
 }

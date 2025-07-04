@@ -1,6 +1,7 @@
 package org.example.database_lib.repository;
 
 import org.example.database_lib.model.Professor;
+import org.example.database_lib.model.Resident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ProfessorDao implements DaoInterface<Professor> {
+public class ProfessorDao implements DaoInterface<Professor, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Professor> rowMapper;
 
@@ -27,14 +28,15 @@ public class ProfessorDao implements DaoInterface<Professor> {
     }
 
     @Override
-    public int create(Professor professor) {
+    public Professor create(Professor professor) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO Professor (university, department) " +
-                        "VALUES (:university, :department)")
-                .param(professor.getUniversity())
-                .param(professor.getDepartment())
+        jdbcClient.sql("INSERT INTO Professor (reader_id, university, department) " +
+                        "VALUES (:reader_id, :university, :department)")
+                .param("reader_id", professor.getReaderId())
+                .param("university", professor.getUniversity())
+                .param("department", professor.getDepartment())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return professor;
     }
 
     @Override
@@ -44,9 +46,17 @@ public class ProfessorDao implements DaoInterface<Professor> {
 
     @Override
     public Optional<Professor> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Professor l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Professor WHERE reader_id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public List<Professor> findByUniversity(String university) {
+        return jdbcClient.sql("select * from professor p " +
+                        "where lower(p.university) = lower(:university) " +
+                        "order by p.reader_id")
+                .param("university", university)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -54,16 +64,16 @@ public class ProfessorDao implements DaoInterface<Professor> {
         return jdbcClient.sql("UPDATE Professor " +
                         "SET university = :university, department = :department " +
                         "WHERE reader_id = :reader_id")
-                .param(professor.getReaderId())
-                .param(professor.getUniversity())
-                .param(professor.getDepartment())
+                .param("university", professor.getUniversity())
+                .param("department", professor.getDepartment())
+                .param("reader_id", professor.getReaderId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Professor l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Professor WHERE reader_id = :id")
+                .param("id", id)
                 .update();
     }
 }

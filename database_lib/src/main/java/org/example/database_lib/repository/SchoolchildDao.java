@@ -1,5 +1,6 @@
 package org.example.database_lib.repository;
 
+import org.example.database_lib.model.Resident;
 import org.example.database_lib.model.Schoolchild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class SchoolchildDao implements DaoInterface<Schoolchild> {
+public class SchoolchildDao implements DaoInterface<Schoolchild, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Schoolchild> rowMapper;
 
@@ -27,14 +28,15 @@ public class SchoolchildDao implements DaoInterface<Schoolchild> {
     }
 
     @Override
-    public int create(Schoolchild schoolchild) {
+    public Schoolchild create(Schoolchild schoolchild) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO Schoolchild (school, grade) " +
-                        "VALUES (:school, :grade)")
-                .param(schoolchild.getSchool())
-                .param(schoolchild.getGrade())
+        jdbcClient.sql("INSERT INTO Schoolchild (reader_id, school, grade) " +
+                        "VALUES (:reader_id, :school, :grade)")
+                .param("reader_id", schoolchild.getReaderId())
+                .param("school", schoolchild.getSchool())
+                .param("grade", schoolchild.getGrade())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return schoolchild;
     }
 
     @Override
@@ -44,9 +46,17 @@ public class SchoolchildDao implements DaoInterface<Schoolchild> {
 
     @Override
     public Optional<Schoolchild> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Schoolchild l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Schoolchild WHERE reader_id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public List<Schoolchild> findBySchool(String school) {
+        return jdbcClient.sql("select * from schoolchild s " +
+                        "where lower(s.school) = lower(:school) " +
+                        "order by s.reader_id")
+                .param("school", school)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -54,16 +64,16 @@ public class SchoolchildDao implements DaoInterface<Schoolchild> {
         return jdbcClient.sql("UPDATE Schoolchild " +
                         "SET school = :school, grade = :grade " +
                         "WHERE reader_id = :reader_id")
-                .param(schoolchild.getReaderId())
-                .param(schoolchild.getSchool())
-                .param(schoolchild.getGrade())
+                .param("school", schoolchild.getSchool())
+                .param("grade", schoolchild.getGrade())
+                .param("reader_id", schoolchild.getReaderId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Schoolchild l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Schoolchild WHERE reader_id = :id")
+                .param("id", id)
                 .update();
     }
 }

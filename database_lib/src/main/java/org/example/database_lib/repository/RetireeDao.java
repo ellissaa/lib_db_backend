@@ -1,5 +1,6 @@
 package org.example.database_lib.repository;
 
+import org.example.database_lib.model.Resident;
 import org.example.database_lib.model.Retiree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RetireeDao implements DaoInterface<Retiree> {
+public class RetireeDao implements DaoInterface<Retiree, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Retiree> rowMapper;
 
@@ -26,13 +27,14 @@ public class RetireeDao implements DaoInterface<Retiree> {
     }
 
     @Override
-    public int create(Retiree retiree) {
+    public Retiree create(Retiree retiree) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO Retiree (has_benefits) " +
-                        "VALUES (:has_benefits)")
-                .param(retiree.getHasBenefits())
+        jdbcClient.sql("INSERT INTO Retiree (reader_id, has_benefits) " +
+                        "VALUES (:reader_id, :has_benefits)")
+                .param("reader_id", retiree.getReaderId())
+                .param("has_benefits", retiree.getHasBenefits())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return retiree;
     }
 
     @Override
@@ -42,9 +44,17 @@ public class RetireeDao implements DaoInterface<Retiree> {
 
     @Override
     public Optional<Retiree> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Retiree l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Retiree WHERE reader_id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public List<Retiree> findByBenefits(Boolean benefits) {
+        return jdbcClient.sql("select * from retiree r " +
+                        "where r.has_benefits = :benefits " +
+                        "order by r.reader_id")
+                .param("benefits", benefits)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -52,15 +62,15 @@ public class RetireeDao implements DaoInterface<Retiree> {
         return jdbcClient.sql("UPDATE Retiree " +
                         "SET has_benefits = :has_benefits " +
                         "WHERE reader_id = :reader_id")
-                .param(retiree.getReaderId())
-                .param(retiree.getHasBenefits())
+                .param("has_benefits", retiree.getHasBenefits())
+                .param("reader_id", retiree.getReaderId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Retiree l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Retiree WHERE reader_id = :id")
+                .param("id", id)
                 .update();
     }
 }

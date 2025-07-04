@@ -8,28 +8,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public abstract class AbstractController<T> {
-    private final AbstractService<T> service;
+public abstract class AbstractController<T, ID> {
+    protected final AbstractService<T, ID> service;
 
     @Autowired
-    protected AbstractController(AbstractService<T> service) {
+    protected AbstractController(AbstractService<T, ID> service) {
         this.service = service;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public int create(@RequestBody T entity) {
+    public T create(@RequestBody T entity) {
         return service.create(entity);
     }
 
     @GetMapping
     public List<T> findAll() {
         return service.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public T findById(@PathVariable Long id) {
-        return service.findById(id);
     }
 
     @PutMapping()
@@ -39,7 +34,7 @@ public abstract class AbstractController<T> {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public int delete(@PathVariable Long id) {
+    public int delete(@PathVariable ID id) {
         return service.delete(id);
     }
 }

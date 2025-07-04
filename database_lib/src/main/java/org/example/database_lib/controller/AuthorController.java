@@ -5,9 +5,10 @@ import org.example.database_lib.service.AbstractService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin()
 @RequestMapping("/api/authors")
-public class AuthorController extends AbstractController<Author> {
-    protected AuthorController(AbstractService<Author> service) {
+public class AuthorController extends AbstractController<Author, Long> {
+    protected AuthorController(AbstractService<Author, Long> service) {
         super(service);
     }
 }

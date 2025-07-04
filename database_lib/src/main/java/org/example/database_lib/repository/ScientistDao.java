@@ -1,5 +1,6 @@
 package org.example.database_lib.repository;
 
+import org.example.database_lib.model.Resident;
 import org.example.database_lib.model.Scientist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ScientistDao implements DaoInterface<Scientist> {
+public class ScientistDao implements DaoInterface<Scientist, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Scientist> rowMapper;
 
@@ -27,14 +28,15 @@ public class ScientistDao implements DaoInterface<Scientist> {
     }
 
     @Override
-    public int create(Scientist scientist) {
+    public Scientist create(Scientist scientist) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO Scientist (academic_degree, workplace) " +
-                        "VALUES (:academic_degree, :workplace)")
-                .param(scientist.getAcademicDegree())
-                .param(scientist.getWorkplace())
+        jdbcClient.sql("INSERT INTO Scientist (reader_id, academic_degree, workplace) " +
+                        "VALUES (:reader_id, :academic_degree, :workplace)")
+                .param("reader_id", scientist.getReaderId())
+                .param("academic_degree", scientist.getAcademicDegree())
+                .param("workplace", scientist.getWorkplace())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return scientist;
     }
 
     @Override
@@ -44,9 +46,17 @@ public class ScientistDao implements DaoInterface<Scientist> {
 
     @Override
     public Optional<Scientist> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Scientist l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Scientist WHERE reader_id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public List<Scientist> findByWorkplace(String workplace) {
+        return jdbcClient.sql("select * from scientist s " +
+                        "where lower(s.workplace) = lower(:workplace) " +
+                        "order by s.reader_id")
+                .param("workplace", workplace)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -54,16 +64,16 @@ public class ScientistDao implements DaoInterface<Scientist> {
         return jdbcClient.sql("UPDATE Scientist " +
                         "SET academic_degree = :academic_degree, workplace = :workplace " +
                         "WHERE reader_id = :reader_id")
-                .param(scientist.getReaderId())
-                .param(scientist.getAcademicDegree())
-                .param(scientist.getWorkplace())
+                .param("academic_degree", scientist.getAcademicDegree())
+                .param("workplace", scientist.getWorkplace())
+                .param("reader_id", scientist.getReaderId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Scientist l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Scientist WHERE reader_id = :id")
+                .param("id", id)
                 .update();
     }
 }

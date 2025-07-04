@@ -1,6 +1,7 @@
 package org.example.database_lib.repository;
 
 import org.example.database_lib.model.AcquisitionJournal;
+import org.example.database_lib.model.Resident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AcquisitionJournalDao implements DaoInterface<AcquisitionJournal> {
+public class AcquisitionJournalDao implements DaoInterface<AcquisitionJournal, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<AcquisitionJournal> rowMapper;
 
@@ -29,16 +30,16 @@ public class AcquisitionJournalDao implements DaoInterface<AcquisitionJournal> {
     }
 
     @Override
-    public int create(AcquisitionJournal acquisition_journal) {
+    public AcquisitionJournal create(AcquisitionJournal acquisition_journal) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("INSERT INTO AcquisitionJournal (acquisition_date, quantity, operation_type, publication_id) " +
                         "VALUES (:acquisition_date, :quantity, :operation_type, :publication_id)")
-                .param(acquisition_journal.getAcquisitionDate())
-                .param(acquisition_journal.getQuantity())
-                .param(acquisition_journal.getOperationType())
-                .param( acquisition_journal.getPublicationId())
+                .param("acquisition_date", acquisition_journal.getAcquisitionDate())
+                .param("quantity", acquisition_journal.getQuantity())
+                .param("operation_type", acquisition_journal.getOperationType())
+                .param("publication_id", acquisition_journal.getPublicationId())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return acquisition_journal;
     }
 
     @Override
@@ -48,9 +49,19 @@ public class AcquisitionJournalDao implements DaoInterface<AcquisitionJournal> {
 
     @Override
     public Optional<AcquisitionJournal> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM AcquisitionJournal l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM AcquisitionJournal WHERE id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public List<AcquisitionJournal> findByPeriod(String start, String end) {
+        return jdbcClient.sql("select * from acquisitionjournal a " +
+                        "where a.acquisition_date >= cast(:start as date) " +
+                        "and a.acquisition_date <= cast(:end as date) " +
+                        "order by a.id")
+                .param("start", start)
+                .param("end", end)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -59,18 +70,18 @@ public class AcquisitionJournalDao implements DaoInterface<AcquisitionJournal> {
                         "SET acquisition_date = :acquisition_date, quantity = :quantity, " +
                         "operation_type = :operation_type, publication_id = :publication_id " +
                         "WHERE id = :id")
-                .param(acquisition_journal.getId())
-                .param(acquisition_journal.getAcquisitionDate())
-                .param(acquisition_journal.getQuantity())
-                .param(acquisition_journal.getOperationType())
-                .param( acquisition_journal.getPublicationId())
+                .param("acquisition_date", acquisition_journal.getAcquisitionDate())
+                .param("quantity", acquisition_journal.getQuantity())
+                .param("operation_type", acquisition_journal.getOperationType())
+                .param("publication_id", acquisition_journal.getPublicationId())
+                .param("id", acquisition_journal.getId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from AcquisitionJournal l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from AcquisitionJournal WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }

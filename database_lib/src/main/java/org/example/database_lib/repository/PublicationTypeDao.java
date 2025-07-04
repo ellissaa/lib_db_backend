@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class PublicationTypeDao implements DaoInterface<PublicationType> {
+public class PublicationTypeDao implements DaoInterface<PublicationType, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<PublicationType> rowMapper;
 
@@ -26,13 +26,13 @@ public class PublicationTypeDao implements DaoInterface<PublicationType> {
     }
 
     @Override
-    public int create(PublicationType publication_type) {
+    public PublicationType create(PublicationType publication_type) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("INSERT INTO PublicationType (name) " +
                         "VALUES (:name)")
-                .param( publication_type.getName())
+                .param("name", publication_type.getName())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return publication_type;
     }
 
     @Override
@@ -42,8 +42,8 @@ public class PublicationTypeDao implements DaoInterface<PublicationType> {
 
     @Override
     public Optional<PublicationType> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM PublicationType l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM PublicationType WHERE id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
     }
 
@@ -52,15 +52,15 @@ public class PublicationTypeDao implements DaoInterface<PublicationType> {
         return jdbcClient.sql("UPDATE PublicationType " +
                         "SET name = :name " +
                         "WHERE id = :id")
-                .param(publication_type.getId())
-                .param( publication_type.getName())
+                .param("name", publication_type.getName())
+                .param("id", publication_type.getId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from PublicationType l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from PublicationType WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }

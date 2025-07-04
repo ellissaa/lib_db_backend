@@ -1,6 +1,7 @@
 package org.example.database_lib.repository;
 
 import org.example.database_lib.model.Librarian;
+import org.example.database_lib.model.Resident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class LibrarianDao implements DaoInterface<Librarian> {
+public class LibrarianDao implements DaoInterface<Librarian, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Librarian> rowMapper;
 
@@ -30,17 +31,17 @@ public class LibrarianDao implements DaoInterface<Librarian> {
     }
 
     @Override
-    public int create(Librarian librarian) {
+    public Librarian create(Librarian librarian) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("INSERT INTO Librarian (name, surname, patronymic, position, hall_id) " +
                         "VALUES (:name, :surname, :patronymic, :position, :hall_id)")
-                .param(librarian.getName())
-                .param(librarian.getSurname())
-                .param(librarian.getPatronymic())
-                .param((librarian.getPosition()))
-                .param(librarian.getHallId())
+                .param("name", librarian.getName())
+                .param("surname", librarian.getSurname())
+                .param("patronymic", librarian.getPatronymic())
+                .param("position", librarian.getPosition())
+                .param("hall_id", librarian.getHallId())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return librarian;
     }
 
     @Override
@@ -50,9 +51,28 @@ public class LibrarianDao implements DaoInterface<Librarian> {
 
     @Override
     public Optional<Librarian> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Librarian l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Librarian WHERE id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
+    }
+
+    public Long countServed(Long id, String start, String end) {
+        return jdbcClient.sql("select count(*) from loanjournal j " +
+                        "where j.librarian_id = :id " +
+                        "and j.loan_date >= cast(:start as date) " +
+                        "and j.loan_date <= cast(:end as date)")
+                .param("id", id)
+                .param("start", start)
+                .param("end", end)
+                .query(Long.class).single();
+    }
+
+    public List<Librarian> findByHall(Long hall) {
+        return jdbcClient.sql("select * from librarian l " +
+                        "where l.hall_id = :hall " +
+                        "order by l.id")
+                .param("hall", hall)
+                .query(rowMapper).list();
     }
 
     @Override
@@ -61,19 +81,19 @@ public class LibrarianDao implements DaoInterface<Librarian> {
                         "SET name = :name, surname = :surname, patronymic = :patronymic, " +
                         "position = :position, hall_id = :hall_id " +
                         "WHERE id = :id")
-                .param(librarian.getId())
-                .param(librarian.getName())
-                .param(librarian.getSurname())
-                .param(librarian.getPatronymic())
-                .param((librarian.getPosition()))
-                .param(librarian.getHallId())
+                .param("name", librarian.getName())
+                .param("surname", librarian.getSurname())
+                .param("patronymic", librarian.getPatronymic())
+                .param("position", librarian.getPosition())
+                .param("hall_id", librarian.getHallId())
+                .param("id", librarian.getId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Librarian l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Librarian WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }

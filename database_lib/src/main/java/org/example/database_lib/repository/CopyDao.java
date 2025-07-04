@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CopyDao implements DaoInterface<Copy> {
+public class CopyDao implements DaoInterface<Copy, Long> {
     private final JdbcClient jdbcClient;
     private final RowMapper<Copy> rowMapper;
 
@@ -26,13 +26,13 @@ public class CopyDao implements DaoInterface<Copy> {
     }
 
     @Override
-    public int create(Copy copy) {
+    public Copy create(Copy copy) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("INSERT INTO Copy (publication_id) " +
                         "VALUES (:publication_id)")
-                .param( copy.getPublicationId())
+                .param("publication_id", copy.getPublicationId())
                 .update(keyHolder);
-        return (int) keyHolder.getKeys().get("id");
+        return copy;
     }
 
     @Override
@@ -42,8 +42,8 @@ public class CopyDao implements DaoInterface<Copy> {
 
     @Override
     public Optional<Copy> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM Copy l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("SELECT * FROM Copy WHERE id = :id")
+                .param("id", id)
                 .query(rowMapper).optional();
     }
 
@@ -52,15 +52,15 @@ public class CopyDao implements DaoInterface<Copy> {
         return jdbcClient.sql("UPDATE Copy " +
                         "SET publication_id = :publication_id " +
                         "WHERE id = :id")
-                .param(copy.getId())
-                .param( copy.getPublicationId())
+                .param("publication_id", copy.getPublicationId())
+                .param("id", copy.getId())
                 .update();
     }
 
     @Override
     public int delete(Long id) {
-        return jdbcClient.sql("DELETE from Copy l WHERE l.id = :id")
-                .param(id)
+        return jdbcClient.sql("DELETE from Copy WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }
